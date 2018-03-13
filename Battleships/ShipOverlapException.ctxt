@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=ShipOverlapException
+comment1.params=
+comment1.target=ShipOverlapException()
+comment2.params=message
+comment2.target=ShipOverlapException(java.lang.String)
+comment3.params=cause
+comment3.target=ShipOverlapException(java.lang.Throwable)
+comment4.params=message\ cause
+comment4.target=ShipOverlapException(java.lang.String,\ java.lang.Throwable)
+numComments=5

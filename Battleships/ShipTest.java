@@ -46,7 +46,7 @@ public class ShipTest
         assertEquals(ship.getStatus(0), ShipStatus.SUNK);
         assertTrue(ship.isSunk());
     }
-    
+
     @Test(expected = InvalidPositionException.class)
     public void shipException() throws InvalidPositionException{
         ship.getStatus(4);

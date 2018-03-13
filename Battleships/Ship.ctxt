@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=Ship
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ Ship\ here.\r\n\r\n\ @author\ (your\ name)\r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=size
+comment1.target=Ship(int)
+comment1.text=\r\n\ Constructor\ takes\ an\ integer\ (the\ size\ of\ the\ ship)\ as\ a\ parameter\r\n
+comment2.params=
+comment2.target=int\ getSize()
+comment3.params=
+comment3.target=boolean\ isSunk()
+comment4.params=offset
+comment4.target=void\ shoot(int)
+comment4.text=\r\n\ Update\ the\ status\ of\ the\ ship\ by\ firing\ at\ the\ offset\ specified.\ \r\n\ After\ the\ method\ is\ called\ then\ the\ status\ at\ the\ offset\ will\ either\ be\ HIT\ (if\ at\ least\ one\ square\ remains\ INTACT)\ \r\n\ or\ SUNK\ (if\ all\ the\ other\ squares\ were\ also\ HIT\ before\ the\ method\ was\ called).\ If\ a\ square\ was\ already\ HIT\ before\r\n\ this\ method\ was\ called,\ it\ remains\ HIT\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\ \r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
+comment5.params=offset
+comment5.target=ShipStatus\ getStatus(int)
+numComments=6
