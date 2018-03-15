@@ -25,7 +25,7 @@ public interface PlayerInterface
      * 
      */
     Placement choosePlacement(ShipInterface ship, BoardInterface board) throws PauseException;
-    
+
     /**
      * @return The shot chosen by the player
      * 
@@ -33,7 +33,7 @@ public interface PlayerInterface
      * the main menu
      */
     Position chooseShot() throws PauseException;
-    
+
     /**
      * After the game calls the chooseShot method, it then calls this method with the result of the shot.
      * The player may choose to keep track of the results of previous shots in its state
@@ -43,14 +43,14 @@ public interface PlayerInterface
      * @param status The result of the shot
      */
     void shotResult(Position position, ShotStatus status);
-    
+
     /**
      * After the game has received the opponent's shot this method is called. It does not 
      * affect the progress of the game, but may be of interest to the player (particularly a human player).
      * @param position The position that the opponent chose for their shot.
      */
     void opponentShot(Position position);
-    
+
     /**
      * @return A string representation of the player i.e. the display name provided as 
      * a parameter to the constructor.

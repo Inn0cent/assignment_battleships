@@ -74,4 +74,14 @@ public class Board implements BoardInterface
     public String toString(){
         return null;
     }
+    
+    /**
+     * Make a deep clone of the current object. Only clones of boards are to be passed to a
+     * player by a game, so that the player does not affect the game state if shots are tried out
+     *
+     * @return the cloned object
+     */
+    public BoardInterface clone(){
+        return null;
+    }
 }
