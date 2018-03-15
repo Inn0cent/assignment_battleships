@@ -1,4 +1,6 @@
 /**
+ * The Ship class represents individual ships in the game of battleships.
+ * 
  * Write a constructor that takes an integer (the size of the ship) as a parameter
  */
 public interface ShipInterface
@@ -20,5 +22,15 @@ public interface ShipInterface
      */
     void shoot(int offset) throws InvalidPositionException;
     
+    /**
+     * Find the status of a square of the ship
+     * 
+     * @param offset The offset from the top/left of the ship.
+     * 
+     * @return the status of that square: INTACT, HIT or SUNK
+     * 
+     * @throws InvalidPositionException When the parameter is less than zero or 
+     * greater than/equal to the size of the ship 
+     */
     ShipStatus getStatus(int offset) throws InvalidPositionException;
 }

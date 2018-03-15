@@ -1,9 +1,9 @@
 /**
  * You should define a constructor with no parameters
  */
-public interface BoardInterface
+public interface BoardInterface extends Cloneable
 {
-    
+
     /**
      * Add a ship to the board with the top/left position specified
      * 
@@ -25,10 +25,12 @@ public interface BoardInterface
     /**
      * Update the board state by shooting at the given position
      * 
+     * @param position The position to shoot at
+     * 
      * @throws InvalidPositionException if the shot position is not on the board
      */
     void shoot(Position position) throws InvalidPositionException;
-    
+
     /**
      * Find the status at the given position
      * 
@@ -39,18 +41,27 @@ public interface BoardInterface
      * @throws InvalidPositionException if the position is not on the board
      */
     ShipStatus getStatus(Position position) throws InvalidPositionException;
-    
+
     /**
      * Find if all the ships on the board have been sunk
      * 
      * @return True If and only if all the ships have been sunk
      */
     boolean allSunk();
-    
+
     /**
      * 
-     * A string representation of the board, suitable for printing to the screen
+     * @return A string representation of the board, suitable for printing to the screen
      * 
      */
     String toString();
+
+    /**
+     * Make a deep clone of the current object. Only clones of boards are to be passed to a
+     * player by a game, so that the player does not affect the game state if shots are tried out
+     *
+     * @return the cloned object
+     */
+    BoardInterface clone();
+
 }
