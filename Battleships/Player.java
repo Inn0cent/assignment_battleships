@@ -8,7 +8,7 @@
  * The player will also be informed of opponent's shots with the opponentShot method. This could be used to update a local copy of the game board for display to the user.
  * 
  */
-public class Player
+public class Player implements PlayerInterface
 {
     
     

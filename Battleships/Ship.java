@@ -1,31 +1,31 @@
-
+import java.util.Arrays;
 /**
- * Write a description of class Ship here.
- *
- * @author (your name)
- * @version (a version number or a date)
+ * The Ship class represents individual ships in the game of battleships.
  */
 public class Ship implements ShipInterface
 {
-    
-    
-    
+
+    private ShipStatus[] squares;
+    private boolean sunk;
+
     /**
      * Constructor takes an integer (the size of the ship) as a parameter
      */
     public Ship(int size)
     {
-        
+        squares = new ShipStatus[size];
+        Arrays.fill(squares, ShipStatus.INTACT);
+        sunk = false;
     }
 
     public int getSize(){
-        return -1;
+        return squares.length;
     }
-    
+
     public boolean isSunk(){
-        return false;
+        return sunk;
     }
-    
+
     /**
      * Update the status of the ship by firing at the offset specified. 
      * After the method is called then the status at the offset will either be HIT (if at least one square remains INTACT) 
@@ -38,10 +38,38 @@ public class Ship implements ShipInterface
      * greater than/equal to the size of the ship 
      */
     public void shoot(int offset) throws InvalidPositionException{
-        
+        if(offset < 0 || offset >= squares.length) {
+            throw new InvalidPositionException("Shot out of array length");
+        }
+        squares[offset] = ShipStatus.HIT;
+        sunk = true;
+        for(int i = 1; i < squares.length; i++){
+            if(squares[i] != squares[0]){
+                sunk = false;
+                break;
+            }
+        }
+        if(sunk){
+            for(int i = 0; i < squares.length; i++){
+                squares[i] = ShipStatus.SUNK;
+            }
+        }
     }
-    
+
+    /**
+     * Find the status of a square of the ship
+     * 
+     * @param offset The offset from the top/left of the ship.
+     * 
+     * @return the status of that square: INTACT, HIT or SUNK
+     * 
+     * @throws InvalidPositionException When the parameter is less than zero or 
+     * greater than/equal to the size of the ship 
+     */
     public ShipStatus getStatus(int offset) throws InvalidPositionException{
-        return null;
+        if(offset < 0 || offset >= squares.length) {
+            throw new InvalidPositionException("Shot out of array length");
+        }
+        return squares[offset];
     }
 }

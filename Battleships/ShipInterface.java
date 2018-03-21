@@ -6,9 +6,9 @@
 public interface ShipInterface
 {    
     int getSize();
-    
+
     boolean isSunk();
-    
+
     /**
      * Update the status of the ship by firing at the offset specified. 
      * After the method is called then the status at the offset will either be HIT (if at least one square remains INTACT) 
@@ -21,7 +21,7 @@ public interface ShipInterface
      * greater than/equal to the size of the ship 
      */
     void shoot(int offset) throws InvalidPositionException;
-    
+
     /**
      * Find the status of a square of the ship
      * 
