@@ -1,5 +1,4 @@
 
-
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +12,7 @@ import org.junit.Test;
  */
 public class BoardTest
 {
-    
+
     private Board board;
     private Ship ship5;
     private Ship ship3;
@@ -25,7 +24,7 @@ public class BoardTest
     private Position pos97;
     private Position pos87;
     private Position pos92;
-    
+
     /**
      * Default constructor for test class BoardTest
      */
@@ -54,7 +53,7 @@ public class BoardTest
             pos87 = new Position(8,7);
             pos92 = new Position(9,2);
         } catch (InvalidPositionException ex){
-            ex.getMessage();
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -67,26 +66,52 @@ public class BoardTest
     public void tearDown()
     {
     }
-    
+
     @Test
     public void noPlaceErrors() throws InvalidPositionException, ShipOverlapException{
         board.placeShip(ship5, pos22, false);
         board.placeShip(ship3, pos53, true);
         board.placeShip(ship2, pos87, false);
-        board.toString();
+        System.out.println(board.toString());
     }
-    
+
     @Test (expected = ShipOverlapException.class)
     public void overlapPlaceErrors() throws InvalidPositionException, ShipOverlapException {
         board.placeShip(ship5, pos22, false);
         board.placeShip(ship3, pos53, true);
         board.placeShip(ship2, pos55, false);
     }
-    
+
     @Test (expected = InvalidPositionException.class)
     public void offEdgePlaceErrors() throws InvalidPositionException, ShipOverlapException {
         board.placeShip(ship5, pos22, false);
         board.placeShip(ship3, pos53, true);
         board.placeShip(ship2, pos97, false);
+    }
+    
+    @Test
+    public void noShootErrors() throws InvalidPositionException, ShipOverlapException{
+        board.placeShip(ship5, pos22, false);
+        board.placeShip(ship3, pos53, true);
+        board.placeShip(ship2, pos87, false);
+        
+        board.shoot(new Position(4,2));
+        assertEquals(ship5.getStatus(2), ShipStatus.HIT);
+        board.toString();
+        board.shoot(new Position(1,1));
+        board.shoot(pos22);
+        board.shoot(new Position(3,2));
+        board.shoot(new Position(5,2));
+        board.shoot(new Position(6,2));
+        assertEquals(ship5.getStatus(0), ShipStatus.SUNK);
+        board.toString();
+        board.shoot(pos53);
+        assertEquals(ship3.getStatus(0), ShipStatus.HIT);
+        board.shoot(new Position(5,4));
+        board.shoot(new Position(5,5));
+        board.shoot(pos87);
+        board.shoot(new Position(9,7));
+        assertEquals(board.allSunk(), true);
+        board.toString();
     }
 }

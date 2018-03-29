@@ -16,4 +16,8 @@ public class Placement
     public boolean isVertical(){
         return isVertical;
     }
+    
+    public String saveString(){
+        return position.toString() + isVertical;
+    }
 }

@@ -72,4 +72,12 @@ public class Ship implements ShipInterface
         }
         return squares[offset];
     }
+    
+    public String saveString(){
+        String save = "";
+        for(ShipStatus status : squares){
+            save += status.name() + ",";
+        }
+        return save; 
+    }
 }

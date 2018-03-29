@@ -7,5 +7,5 @@
  */
 public enum ShotStatus
 {
-    HIT, MISS
+    HIT, MISS, SUNK
 }

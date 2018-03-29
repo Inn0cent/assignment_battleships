@@ -14,4 +14,6 @@ comment4.text=\r\n\ Update\ the\ status\ of\ the\ ship\ by\ firing\ at\ the\ off
 comment5.params=offset
 comment5.target=ShipStatus\ getStatus(int)
 comment5.text=\r\n\ Find\ the\ status\ of\ a\ square\ of\ the\ ship\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\r\n\ \r\n\ @return\ the\ status\ of\ that\ square\:\ INTACT,\ HIT\ or\ SUNK\r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
-numComments=6
+comment6.params=
+comment6.target=java.lang.String\ saveString()
+numComments=7

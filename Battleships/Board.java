@@ -8,11 +8,11 @@ import java.util.HashMap;
 public class Board implements BoardInterface
 {
 
-    private java.util.HashMap<Position, ShipOrientation> ships;
+    private java.util.HashMap<Ship, Placement> ships;
 
     public Board()
     {
-        ships = new java.util.HashMap<Position, ShipOrientation>();
+        ships = new java.util.HashMap<Ship, Placement>();
     }
 
     /**
@@ -33,16 +33,16 @@ public class Board implements BoardInterface
      */
     public void placeShip(ShipInterface ship, Position position, boolean isVertical) throws InvalidPositionException, ShipOverlapException{
         Position lookPosition = new Position(position.getX(), position.getY()); //so position is not overwritten        
-        
-        if((isVertical && position.getY() + ship.getSize() > 10) || (!isVertical && position.getX() + ship.getSize() > 10)){ //do not have to check if less than 0 as Position already does that
+        Ship newShip = (Ship) ship; //so it can be stored as type ship
+        if((isVertical && position.getY() + newShip.getSize() > 10) || (!isVertical && position.getX() + newShip.getSize() > 10)){ //do not have to check if less than 0 as Position already does that
             throw new InvalidPositionException("Not all the squares fit onto the board");
         } 
         
-        for(Position pos : ships.keySet()){
+        for(ShipInterface placedShip : ships.keySet()){
             lookPosition.setX(position.getX());
             lookPosition.setY(position.getY());
-            for(int i = 0; i < ship.getSize(); i++){
-                if(hitX(pos, lookPosition) || hitY(pos, lookPosition)){
+            for(int i = 0; i < newShip.getSize(); i++){
+                if(hitX(placedShip, lookPosition) || hitY(placedShip, lookPosition)){
                     throw new ShipOverlapException("Ships have overlapped at (" + lookPosition + ")");
                 }
                 if(isVertical){                    
@@ -52,7 +52,7 @@ public class Board implements BoardInterface
                 }
             }
         }
-        ships.put(position, new ShipOrientation(ship, isVertical));
+        ships.put(newShip, new Placement(position, isVertical));
     }
 
     /**
@@ -62,18 +62,20 @@ public class Board implements BoardInterface
      */
     public void shoot(Position position) throws InvalidPositionException{ // Any position that is passed must be on the board
         boolean hits = false;
-        for(Position pos : ships.keySet()){
-            if(hitY(pos, position)){
+        for(ShipInterface ship : ships.keySet()){
+            if(hitY(ship, position)){
                 try{ // this ensures that the shot hits the ship
-                    ships.get(pos).getShip().shoot(position.getY() - pos.getY());
+                    ship.shoot(position.getY() - ships.get(ship).getPosition().getY());
+                    System.out.println("hit");
                 } catch (InvalidPositionException ex){
                     System.out.println("miss");
                 }
                 hits = true;
                 break;
-            } else if(hitX(pos, position)){
+            } else if(hitX(ship, position)){
                 try{ // this ensures that the shot hits the ship
-                    ships.get(pos).getShip().shoot(position.getX() - pos.getX());
+                    ship.shoot(position.getX() - ships.get(ship).getPosition().getX());
+                    System.out.println("hit");
                 } catch (InvalidPositionException ex){
                     System.out.println("miss");
                 }
@@ -83,6 +85,7 @@ public class Board implements BoardInterface
         }
         if(!hits){
             System.out.println("miss");
+            System.out.println();
         }
     }
 
@@ -96,9 +99,11 @@ public class Board implements BoardInterface
      * @throws InvalidPositionException if the position is not on the board
      */
     public ShipStatus getStatus(Position position) throws InvalidPositionException{
-        for(Position pos : ships.keySet()){
-            if(hitX(pos, position) || hitY(pos, position)){
-                return ships.get(pos).getShip().getStatus(0);
+        for(ShipInterface ship : ships.keySet()){
+            if(hitX(ship, position)){
+                return ship.getStatus(position.getX() - ships.get(ship).getPosition().getX());
+            } else if(hitY(ship, position)){
+                return ship.getStatus(position.getY() - ships.get(ship).getPosition().getY());
             }
         }
         return ShipStatus.NONE;
@@ -111,9 +116,9 @@ public class Board implements BoardInterface
      */
     public boolean allSunk(){
         boolean sunk = true;
-        for(ShipOrientation value : ships.values()){
+        for(ShipInterface ship : ships.keySet()){
             try{
-                if(value.getShip().getStatus(0) != ShipStatus.SUNK){
+                if(ship.getStatus(0) != ShipStatus.SUNK){
                     sunk = false;
                 }
             } catch (InvalidPositionException ex){
@@ -132,24 +137,31 @@ public class Board implements BoardInterface
         String boardRepresentation = "";
         HashMap<Position, String> verticalSymbols = new HashMap<Position, String>();
         boolean flag = true;
-        for(Position pos : ships.keySet()){
-            if(ships.get(pos).getOrientation()){
-                verticalSymbols.put(pos, "^^");
-                for(int i = 1; i < ships.get(pos).getShip().getSize() - 1; i++){
-                    try{
-                        verticalSymbols.put(new Position(pos.getX(), pos.getY()+i), "$$");
-                    } catch (InvalidPositionException ex) {
-                        
+        for(ShipInterface ship : ships.keySet()){
+            if(ships.get(ship).isVertical()){
+                try {
+                    if(ship.getStatus(0) == ShipStatus.HIT || ship.getStatus(0) == ShipStatus.SUNK){
+                        verticalSymbols.put(ships.get(ship).getPosition(), "XX");
+                    } else {
+                        verticalSymbols.put(ships.get(ship).getPosition(), "/\\");
                     }
-                }
-                try{
-                    verticalSymbols.put(new Position(pos.getX(), pos.getY()+ships.get(pos).getShip().getSize()-1), "vv");
+                    for(int i = 1; i < ship.getSize() - 1; i++){
+                        if(ship.getStatus(i) == ShipStatus.HIT || ship.getStatus(i) == ShipStatus.SUNK){
+                            verticalSymbols.put(new Position(ships.get(ship).getPosition().getX(), ships.get(ship).getPosition().getY()+i), "XX");
+                        } else {
+                            verticalSymbols.put(new Position(ships.get(ship).getPosition().getX(), ships.get(ship).getPosition().getY()+i), "$$");
+                        }
+                    }
+                    if(ship.getStatus(ship.getSize()-1) == ShipStatus.HIT || ship.getStatus(ship.getSize()-1) == ShipStatus.SUNK){
+                        verticalSymbols.put(new Position(ships.get(ship).getPosition().getX(), ships.get(ship).getPosition().getY()+ship.getSize()-1), "XX");
+                    } else {
+                        verticalSymbols.put(new Position(ships.get(ship).getPosition().getX(), ships.get(ship).getPosition().getY()+ship.getSize()-1), "\\/");
+                    }
                 } catch (InvalidPositionException ex){
                     
                 }
             }
         }
-        System.out.println(verticalSymbols);
         boardRepresentation = "  | 1| 2| 3| 4| 5| 6| 7| 8| 9|10|\n";
         for(int y = 1; y <= 10; y++){
             if(y < 10){
@@ -158,14 +170,30 @@ public class Board implements BoardInterface
             boardRepresentation += y + "|";
             for(int x = 1; x <= 10; x++){
                 flag = true;
-                for(Position pos : ships.keySet()){
-                    if(pos.getX() == x && pos.getY() == y && !ships.get(pos).getOrientation()){
-                        boardRepresentation += "<=|";
-                        for(int i = 1; i < ships.get(pos).getShip().getSize()-1; i++){
-                            boardRepresentation += "==|";
+                for(ShipInterface ship : ships.keySet()){
+                    if(ships.get(ship).getPosition().getX() == x && ships.get(ship).getPosition().getY() == y && !ships.get(ship).isVertical()){
+                        try{
+                            if(ship.getStatus(0) == ShipStatus.HIT || ship.getStatus(0) == ShipStatus.SUNK){
+                                boardRepresentation += "XX|";
+                            } else {
+                                boardRepresentation += "<=|";
+                            }
+                            for(int i = 1; i < ship.getSize()-1; i++){
+                                if(ship.getStatus(i) == ShipStatus.HIT || ship.getStatus(i) == ShipStatus.SUNK){
+                                    boardRepresentation += "XX|";
+                                } else {
+                                    boardRepresentation += "==|";
+                                }
+                            }
+                            if(ship.getStatus(ship.getSize()-1) == ShipStatus.HIT || ship.getStatus(ship.getSize()-1) == ShipStatus.SUNK){
+                                boardRepresentation += "XX|";
+                            } else {
+                                boardRepresentation += "=>|";
+                            }
+                        } catch (InvalidPositionException ex) {
+                            
                         }
-                        boardRepresentation += "=>|";
-                        x += ships.get(pos).getShip().getSize()-1;
+                        x += ship.getSize()-1;
                         flag = false;
                     }          
                 }
@@ -183,7 +211,6 @@ public class Board implements BoardInterface
             }
             boardRepresentation += "\n";
         }
-        System.out.println(boardRepresentation);
         return boardRepresentation;
     }
     
@@ -205,9 +232,9 @@ public class Board implements BoardInterface
      */
     public BoardInterface clone(){
         BoardInterface boardClone = new Board();
-        for(Position pos : ships.keySet()){
+        for(ShipInterface ship : ships.keySet()){
             try{
-                boardClone.placeShip(ships.get(pos).getShip(), pos, ships.get(pos).getOrientation());
+                boardClone.placeShip(ship, ships.get(ship).getPosition(), ships.get(ship).isVertical());
             } catch (InvalidPositionException ex){
 
             } catch (ShipOverlapException ex){
@@ -226,8 +253,8 @@ public class Board implements BoardInterface
      * 
      * @param the target position
      */
-    public boolean hitY(Position key, Position target){ 
-        if(ships.get(key).getOrientation() && key.getY() <= target.getY() && key.getY() + ships.get(key).getShip().getSize() >= target.getY() && target.getX() == key.getX()){
+    public boolean hitY(ShipInterface key, Position target){ 
+        if(ships.get(key).isVertical() && ships.get(key).getPosition().getY() <= target.getY() && ships.get(key).getPosition().getY() + key.getSize() >= target.getY() && target.getX() == ships.get(key).getPosition().getX()){
             return true;
         }
         return false;
@@ -242,10 +269,22 @@ public class Board implements BoardInterface
      * 
      * @param the target position
      */
-    public boolean hitX(Position key, Position target){
-        if(!ships.get(key).getOrientation() && key.getX() <= target.getX() && key.getX() + ships.get(key).getShip().getSize() >= target.getX() && target.getY() == key.getY()){
+    public boolean hitX(ShipInterface key, Position target){
+        if(!ships.get(key).isVertical() && ships.get(key).getPosition().getX() <= target.getX() && ships.get(key).getPosition().getX() + key.getSize() >= target.getX() && target.getY() == ships.get(key).getPosition().getY()){
             return true;
         }
         return false;
+    }
+    
+    public int numShipsPlaced(){
+        return ships.size();
+    }
+    
+    public String saveString(){
+        String save = "";
+        for(Ship ship : ships.keySet()){
+            save += ship.saveString() + ":" + ships.get(ship).saveString() + ";";
+        }
+        return save;
     }
 }
