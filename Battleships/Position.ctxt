@@ -14,4 +14,6 @@ comment5.target=void\ setY(int)
 comment5.text=\r\n\ \r\n\ @param\ y\ the\ y\ position\ of\ the\ location.\ 1\ is\ at\ the\ top,\ 10\ is\ at\ the\ bottom\r\n\ @throws\ InvalidPositionException\ if\ the\ parameter\ is\ less\ than\ 1\ or\ more\ than\ 10\r\n
 comment6.params=
 comment6.target=java.lang.String\ toString()
-numComments=7
+comment7.params=pos
+comment7.target=boolean\ equals(Position)
+numComments=8

@@ -37,10 +37,17 @@ public class Position
             throw new InvalidPositionException("" + y);
         } 
         this.y = y;
-    }
+    }      
     
     @Override
     public String toString(){
         return x + "," + y;
+    }
+    
+    public boolean equals(Position pos){
+        if(x == pos.getX() && y == pos.getY()){
+            return true;
+        }
+        return false;
     }
 }

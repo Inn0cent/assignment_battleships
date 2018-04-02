@@ -34,7 +34,7 @@ public class Board implements BoardInterface
     public void placeShip(ShipInterface ship, Position position, boolean isVertical) throws InvalidPositionException, ShipOverlapException{
         Position lookPosition = new Position(position.getX(), position.getY()); //so position is not overwritten        
         Ship newShip = (Ship) ship; //so it can be stored as type ship
-        if((isVertical && position.getY() + newShip.getSize() > 10) || (!isVertical && position.getX() + newShip.getSize() > 10)){ //do not have to check if less than 0 as Position already does that
+        if((isVertical && position.getY() + newShip.getSize() - 1 > 10) || (!isVertical && position.getX() + newShip.getSize() - 1 > 10)){ //do not have to check if less than 0 as Position already does that
             throw new InvalidPositionException("Not all the squares fit onto the board");
         } 
         
@@ -286,5 +286,22 @@ public class Board implements BoardInterface
             save += ship.saveString() + ":" + ships.get(ship).saveString() + ";";
         }
         return save;
+    }
+    
+    public static Board loadBoard(String input){
+        Board newBoard = new Board();
+        String[] splitInput = input.split(";");
+        for(String str : splitInput){
+            String[] shipPlacement = str.split(":");
+            try{
+                Placement newPlace = Placement.loadPlacement(shipPlacement[1]);
+                newBoard.placeShip(Ship.loadShip(shipPlacement[0]), newPlace.getPosition(), newPlace.isVertical());
+            } catch (InvalidPositionException ex){
+                System.out.println("Loading error - save corrupted");
+            } catch (ShipOverlapException ex){
+                System.out.println("Loading error - save corrupted");
+            }
+        }
+        return newBoard;
     }
 }

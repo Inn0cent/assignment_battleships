@@ -17,6 +17,8 @@ public class Player implements PlayerInterface
     private StringInput input;
     private HashMap<Position, ShotStatus> prevShots;
     private ArrayList<Position> oppShots;
+    private Position prevPos;
+    private AI brain;
     
     public Player(String name)
     {
@@ -24,6 +26,7 @@ public class Player implements PlayerInterface
         input = new StringInput();
         prevShots = new HashMap<Position, ShotStatus>();
         oppShots = new ArrayList<Position>();
+        brain = new AI();
     }
 
     /**
@@ -100,6 +103,7 @@ public class Player implements PlayerInterface
      * @param status The result of the shot
      */
     public void shotResult(Position position, ShotStatus status){
+        prevPos = position;
         prevShots.put(position, status);
     }
 
@@ -120,6 +124,10 @@ public class Player implements PlayerInterface
         return name;
     }
     
+    public Position aiShoot(){
+        return brain.shoot(prevShots, prevPos);
+    }
+    
     public Position enterCoordinate() throws PauseException{
         int x;
         int y;
@@ -136,7 +144,7 @@ public class Player implements PlayerInterface
                 y = Integer.parseInt(inputString[1]);
                 return new Position(x,y);
             } catch (NumberFormatException ex){
-                System.out.println("Please enter numbers and don't have any spaces");
+                System.out.println("Please enter integers and don't have any spaces");
                 correct = false;
             } catch (InvalidPositionException ex){
                 System.out.println("Please enter numbers that are between 1 and 10");
@@ -161,15 +169,32 @@ public class Player implements PlayerInterface
         return save;
     }
     
-    public Player loadPlayer(String input){
-        Player newPlayer;
+    public static Player loadPlayer(String input){
+        Player newPlayer = null;
         String[] splitInput = input.split(";");
-        String[] prevShotsString = splitInput[1].split("/");
-        newPlayer = new Player(splitInput[0]);
-        for(String str : prevShotsString){
-            String[] posStatus = str.split(":");
-            String[] pos = posStatus[0].split(",");
-            newPlayer.shotResult(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])), ShotStatus.valueOf(posStatus[1]));
+        try{
+            String[] prevShotsString = splitInput[1].split("/");
+            String[] oppShotsString = splitInput[2].split("/");
+            newPlayer = new Player(splitInput[0]);
+            for(String str : prevShotsString){
+                String[] posStatus = str.split(":");
+                String[] pos = posStatus[0].split(",");
+                try{ 
+                    newPlayer.shotResult(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])), ShotStatus.valueOf(posStatus[1]));
+                } catch (InvalidPositionException ex) { 
+                    System.out.println("Loading error - save corrupted");
+                }
+            }
+            for(String str : oppShotsString){
+                String[] pos = str.split(",");
+                try{ 
+                    newPlayer.opponentShot(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])));
+                } catch (InvalidPositionException ex) { 
+                    System.out.println("Loading error - save corrupted");
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("Incorrect file format");
         }
         return newPlayer;
     }

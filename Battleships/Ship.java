@@ -80,4 +80,14 @@ public class Ship implements ShipInterface
         }
         return save; 
     }
+    
+    public static Ship loadShip(String input){
+        Ship newShip = null;
+        String[] statuses = input.split(",");
+        newShip = new Ship(statuses.length);
+        for(int i = 0; i < statuses.length; i++){
+            newShip.squares[i] = ShipStatus.valueOf(statuses[i]);
+        }
+        return newShip;
+    }
 }

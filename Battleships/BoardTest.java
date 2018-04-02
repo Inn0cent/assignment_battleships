@@ -24,6 +24,8 @@ public class BoardTest
     private Position pos97;
     private Position pos87;
     private Position pos92;
+    private Position pos23;
+    private Position pos27;
 
     /**
      * Default constructor for test class BoardTest
@@ -52,6 +54,8 @@ public class BoardTest
             pos97 = new Position(9,7);
             pos87 = new Position(8,7);
             pos92 = new Position(9,2);
+            pos23 = new Position(2,3);
+            pos27 = new Position(2,7);
         } catch (InvalidPositionException ex){
             System.out.println(ex.getMessage());
         }
@@ -70,9 +74,10 @@ public class BoardTest
     @Test
     public void noPlaceErrors() throws InvalidPositionException, ShipOverlapException{
         board.placeShip(ship5, pos22, false);
-        board.placeShip(ship3, pos53, true);
+        board.placeShip(ship3, pos23, true);
         board.placeShip(ship2, pos87, false);
         System.out.println(board.toString());
+        board.getStatus(pos27);
     }
 
     @Test (expected = ShipOverlapException.class)
