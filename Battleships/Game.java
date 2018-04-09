@@ -70,6 +70,7 @@ public class Game implements GameInterface
                     game.loadGame(filename);
                     winner = game.play();
                 } catch (IOException ex) {
+                    ex.getMessage();
                     System.out.println("File failed to load");
                 }
                 break;
@@ -157,77 +158,31 @@ public class Game implements GameInterface
             ShipInterface[] ships1 = {new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)};
             ShipInterface[] ships2 = {new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)};
             if(humanPlayer1){
-                System.out.println(player1.toString() + " place your ships");
-                System.out.println(board1.toString());
-                for(int i = board1.numShipsPlaced(); i < ships1.length; i++){
-                    placement = player1.choosePlacement(ships1[i], board1.clone());
-                    try{
-                        board1.placeShip(ships1[i], placement.getPosition(), placement.isVertical());
-                    } catch (InvalidPositionException ex){
-                        System.out.println("Player " + player1.toString() + " has forefitted");
-                        return player2;
-                    } catch (ShipOverlapException ex){
-                        System.out.println("Player " + player1.toString() + " has forefitted");
-                        return player2;
-                    }
-                    System.out.println(board1.toString());
-                    System.out.println();
+                try{
+                    board1 = playerPlaceShips(player1, board1, ships1);
+                } catch (InvalidPositionException ex){
+                    System.out.println("Player " + player1.toString() + " has forefitted");
+                    return player2;
+                } catch (ShipOverlapException ex){
+                    System.out.println("Player " + player1.toString() + " has forefitted");
+                    return player2;
                 }
             } else {
-                for(int i = board1.numShipsPlaced(); i < ships1.length; i++){
-                    boolean valid = false;
-                    while(!valid){
-                        valid = true;
-                        int x = rand.nextInt(10) + 1;
-                        int y = rand.nextInt(10) + 1;
-                        boolean isVertical = rand.nextBoolean();
-                        try{
-                            Position newPos = new Position(x,y);
-                            board1.placeShip(ships1[i], newPos, isVertical);
-                        } catch (InvalidPositionException ex) {
-                            valid = false;
-                        } catch (ShipOverlapException ex){
-                            valid = false;
-                        }   
-                    }
-                }
+                board1 = aiPlaceShips(board1, ships1);
             }
 
             if(humanPlayer2){
-                System.out.println(player2.toString() + " place your ships");
-                System.out.println(board2.toString());
-                for(int i = board2.numShipsPlaced(); i < ships2.length; i++){
-                    placement = player2.choosePlacement(ships2[i], board2.clone());
-                    try{
-                        board2.placeShip(ships2[i], placement.getPosition(), placement.isVertical());
-                    } catch (InvalidPositionException ex){
-                        System.out.println("Player " + player2.toString() + " has forefitted");
-                        return player1;
-                    } catch (ShipOverlapException ex){
-                        System.out.println("Player " + player2.toString() + " has forefitted");
-                        return player1;
-                    } 
-                    System.out.println(board2.toString());
-                    System.out.println();
+                try{
+                    board2 = playerPlaceShips(player2, board2, ships2);
+                } catch (InvalidPositionException ex){
+                    System.out.println("Player " + player2.toString() + " has forefitted");
+                    return player1;
+                } catch (ShipOverlapException ex){
+                    System.out.println("Player " + player2.toString() + " has forefitted");
+                    return player1;
                 }
             } else {
-                for(int i = board2.numShipsPlaced(); i < ships1.length; i++){
-                    boolean valid = false;
-                    while(!valid){
-                        valid = true;
-                        int x = rand.nextInt(10) + 1;
-                        int y = rand.nextInt(10) + 1;
-                        boolean isVertical = rand.nextBoolean();
-                        try{
-                            Position newPos = new Position(x,y);
-                            board2.placeShip(ships2[i], newPos, isVertical);
-                        } catch (InvalidPositionException ex) {
-                            valid = false;
-                        } catch (ShipOverlapException ex){
-                            valid = false;
-                        }   
-                    }
-                }
+                board2 = aiPlaceShips(board2, ships2);
             }         
 
             while(true){
@@ -240,8 +195,6 @@ public class Game implements GameInterface
                         shot = player1.chooseShot();
                     } else {
                         shot = player1.aiShoot();
-                        System.out.println(player1.toString() + "'s board");
-                        System.out.println(board1.toString());
                     }
                     board2.shoot(shot);
                     player2.opponentShot(shot);
@@ -254,7 +207,7 @@ public class Game implements GameInterface
                         player1.shotResult(shot, ShotStatus.SUNK);
                     }
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
-                    System.out.println("Player " + player1.toString() + " has forefitted. Last shot was " + shot);
+                    System.out.println("Player " + player1.toString() + " has forefitted.");
                     return player2;
                 }
                 if(board2.allSunk()){
@@ -269,8 +222,6 @@ public class Game implements GameInterface
                         shot = player2.chooseShot();
                     } else {
                         shot = player2.aiShoot();
-                        System.out.println(player2.toString() + "'s board");
-                        System.out.println(board2.toString());
                     }
                     board1.shoot(shot);
                     player1.opponentShot(shot);
@@ -283,8 +234,7 @@ public class Game implements GameInterface
                         player2.shotResult(shot, ShotStatus.SUNK);
                     }
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
-                    System.out.println("Player " + player2.toString() + " has forefitted. Last shot was " + shot);
-                    return player1;
+                    System.out.println("Player " + player2.toString() + " has forefitted.");                    return player1;
                 }
                 if(board1.allSunk()){
                     return player2;
@@ -312,6 +262,8 @@ public class Game implements GameInterface
         out.println(p2);
         out.println(b1);
         out.println(b2);
+        out.println(humanPlayer1);
+        out.println(humanPlayer2);
         out.close(); 
     }
 
@@ -343,8 +295,45 @@ public class Game implements GameInterface
             player2 = Player.loadPlayer(input.get(1));
             board1 = Board.loadBoard(input.get(2));
             board2 = Board.loadBoard(input.get(3));
+            humanPlayer1 = Boolean.parseBoolean(input.get(4));
+            humanPlayer2 = Boolean.parseBoolean(input.get(4));
         } catch (IndexOutOfBoundsException ex){
-            System.out.println("Loading error - incorrect file format");
+            //System.out.println("Loading error - incorrect file format");
+            throw new IOException("Loading error - incorrect file format");
         }
+    }
+
+    public Board playerPlaceShips(Player player, Board board, ShipInterface[] ships) throws InvalidPositionException, ShipOverlapException, PauseException {
+        Placement placement;
+        System.out.println(player.toString() + " place your ships");
+        System.out.println(board.toString());
+        for(int i = board.numShipsPlaced(); i < ships.length; i++){
+            placement = player.choosePlacement(ships[i], board.clone());        	
+            board.placeShip(ships[i], placement.getPosition(), placement.isVertical());
+            System.out.println(board.toString());
+            System.out.println();
+        }
+        return board;
+    }
+
+    public Board aiPlaceShips(Board board, ShipInterface[] ships){
+        for(int i = board.numShipsPlaced(); i < ships.length; i++){
+            boolean valid = false;
+            while(!valid){
+                valid = true;
+                int x = rand.nextInt(10) + 1;
+                int y = rand.nextInt(10) + 1;
+                boolean isVertical = rand.nextBoolean();
+                try{
+                    Position newPos = new Position(x,y);
+                    board.placeShip(ships[i], newPos, isVertical);
+                } catch (InvalidPositionException ex) {
+                    valid = false;
+                } catch (ShipOverlapException ex){
+                    valid = false;
+                }   
+            }
+        }
+        return board;
     }
 }

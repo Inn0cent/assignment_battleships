@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.io.IOException;
 /**
  * Write a description of class Board here.
  *
@@ -254,7 +255,7 @@ public class Board implements BoardInterface
      * @param the target position
      */
     public boolean hitY(ShipInterface key, Position target){ 
-        if(ships.get(key).isVertical() && ships.get(key).getPosition().getY() <= target.getY() && ships.get(key).getPosition().getY() + key.getSize() >= target.getY() && target.getX() == ships.get(key).getPosition().getX()){
+        if(ships.get(key).isVertical() && ships.get(key).getPosition().getY() <= target.getY() && ships.get(key).getPosition().getY() + key.getSize() > target.getY() && target.getX() == ships.get(key).getPosition().getX()){
             return true;
         }
         return false;
@@ -270,7 +271,7 @@ public class Board implements BoardInterface
      * @param the target position
      */
     public boolean hitX(ShipInterface key, Position target){
-        if(!ships.get(key).isVertical() && ships.get(key).getPosition().getX() <= target.getX() && ships.get(key).getPosition().getX() + key.getSize() >= target.getX() && target.getY() == ships.get(key).getPosition().getY()){
+        if(!ships.get(key).isVertical() && ships.get(key).getPosition().getX() <= target.getX() && ships.get(key).getPosition().getX() + key.getSize() > target.getX() && target.getY() == ships.get(key).getPosition().getY()){
             return true;
         }
         return false;
@@ -288,7 +289,7 @@ public class Board implements BoardInterface
         return save;
     }
     
-    public static Board loadBoard(String input){
+    public static Board loadBoard(String input) throws IOException{
         Board newBoard = new Board();
         String[] splitInput = input.split(";");
         for(String str : splitInput){
@@ -297,9 +298,9 @@ public class Board implements BoardInterface
                 Placement newPlace = Placement.loadPlacement(shipPlacement[1]);
                 newBoard.placeShip(Ship.loadShip(shipPlacement[0]), newPlace.getPosition(), newPlace.isVertical());
             } catch (InvalidPositionException ex){
-                System.out.println("Loading error - save corrupted");
+                throw new IOException("Loading error - incorrect file format");
             } catch (ShipOverlapException ex){
-                System.out.println("Loading error - save corrupted");
+                throw new IOException("Loading error - incorrect file format");
             }
         }
         return newBoard;

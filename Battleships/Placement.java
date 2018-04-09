@@ -1,3 +1,4 @@
+import java.io.IOException;
 
 public class Placement
 {
@@ -21,15 +22,17 @@ public class Placement
         return position.toString() + isVertical;
     }
     
-    public static Placement loadPlacement(String input){
+    public static Placement loadPlacement(String input) throws IOException{
         Placement newPlacement = null;
         String[] splitInput = input.split(",");
         try{
             newPlacement = new Placement(new Position(Integer.parseInt(splitInput[0]), Integer.parseInt(splitInput[1])), Boolean.parseBoolean(splitInput[2]));
         } catch (InvalidPositionException ex){
-            System.out.println("Loading error - save corrupted");
+            throw new IOException("Loading error - incorrect file format");
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("Incorrect file format");
+            throw new IOException("Loading error - incorrect file format");
+        } catch (IllegalArgumentException ex){
+            throw new IOException("Loading error - incorrect file format");
         }
         return newPlacement;
     }

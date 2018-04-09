@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.io.IOException;
 /**
  *
  * This type represents individual players in the game of battleships.
@@ -169,7 +170,7 @@ public class Player implements PlayerInterface
         return save;
     }
     
-    public static Player loadPlayer(String input){
+    public static Player loadPlayer(String input) throws IOException{
         Player newPlayer = null;
         String[] splitInput = input.split(";");
         try{
@@ -182,7 +183,11 @@ public class Player implements PlayerInterface
                 try{ 
                     newPlayer.shotResult(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])), ShotStatus.valueOf(posStatus[1]));
                 } catch (InvalidPositionException ex) { 
-                    System.out.println("Loading error - save corrupted");
+                    //System.out.println("Loading error - incorrect file format");
+                    throw new IOException("Loading error - incorrect file format");
+                } catch (ArrayIndexOutOfBoundsException ex){
+                    //System.out.println("Loading error - incorrect file format");
+                    throw new IOException("Loading error - incorrect file format");
                 }
             }
             for(String str : oppShotsString){
@@ -190,11 +195,15 @@ public class Player implements PlayerInterface
                 try{ 
                     newPlayer.opponentShot(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])));
                 } catch (InvalidPositionException ex) { 
-                    System.out.println("Loading error - save corrupted");
+                    //System.out.println("Loading error - save corrupted");
+                    throw new IOException("Loading error - incorrect file format");
+                } catch (ArrayIndexOutOfBoundsException ex){
+                    //System.out.println("Loading error - incorrect file format");
+                    throw new IOException("Loading error - incorrect file format");
                 }
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
-            System.out.println("Incorrect file format");
+            throw new IOException("Loading error - incorrect file format");
         }
         return newPlayer;
     }

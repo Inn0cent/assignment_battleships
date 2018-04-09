@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.io.IOException;
 /**
  * The Ship class represents individual ships in the game of battleships.
  */
@@ -81,12 +82,16 @@ public class Ship implements ShipInterface
         return save; 
     }
     
-    public static Ship loadShip(String input){
+    public static Ship loadShip(String input) throws IOException{
         Ship newShip = null;
         String[] statuses = input.split(",");
         newShip = new Ship(statuses.length);
-        for(int i = 0; i < statuses.length; i++){
-            newShip.squares[i] = ShipStatus.valueOf(statuses[i]);
+        try{
+            for(int i = 0; i < statuses.length; i++){
+                newShip.squares[i] = ShipStatus.valueOf(statuses[i]);
+            }
+        } catch (IllegalArgumentException ex){
+            throw new IOException("Loading error - incorrect file format");
         }
         return newShip;
     }
