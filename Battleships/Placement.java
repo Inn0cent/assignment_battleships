@@ -19,7 +19,7 @@ public class Placement
     }
     
     public String saveString(){
-        return position.toString() + isVertical;
+        return position.toString() + "," + isVertical;
     }
     
     public static Placement loadPlacement(String input) throws IOException{

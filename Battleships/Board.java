@@ -67,26 +67,20 @@ public class Board implements BoardInterface
             if(hitY(ship, position)){
                 try{ // this ensures that the shot hits the ship
                     ship.shoot(position.getY() - ships.get(ship).getPosition().getY());
-                    System.out.println("hit");
                 } catch (InvalidPositionException ex){
-                    System.out.println("miss");
+                    
                 }
                 hits = true;
                 break;
             } else if(hitX(ship, position)){
                 try{ // this ensures that the shot hits the ship
                     ship.shoot(position.getX() - ships.get(ship).getPosition().getX());
-                    System.out.println("hit");
                 } catch (InvalidPositionException ex){
-                    System.out.println("miss");
+                    
                 }
                 hits = true;
                 break;
             } 
-        }
-        if(!hits){
-            System.out.println("miss");
-            System.out.println();
         }
     }
 
@@ -134,7 +128,7 @@ public class Board implements BoardInterface
      * A string representation of the board, suitable for printing to the screen
      * 
      */
-    public String toString(){ // final letter is j
+    public String toString(){
         String boardRepresentation = "";
         HashMap<Position, String> verticalSymbols = new HashMap<Position, String>();
         boolean flag = true;

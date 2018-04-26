@@ -67,11 +67,14 @@ public class Game implements GameInterface
                 System.out.println("Enter filename");
                 filename = stringInput.enterData();
                 try{
+                    game = new Game(null, null);
                     game.loadGame(filename);
                     winner = game.play();
                 } catch (IOException ex) {
                     ex.getMessage();
                     System.out.println("File failed to load");
+                } catch (NullPointerException ex){
+                    System.out.println(ex.getMessage());
                 }
                 break;
                 case "4":
@@ -91,7 +94,7 @@ public class Game implements GameInterface
                 flag = true;
                 break;
                 default:
-                System.out.println("Please enter a number between 1 and 4");
+                System.out.println("Please enter a number between 1 and 5");
                 break;
             }
             if(winner != null && flag == false){
@@ -195,16 +198,20 @@ public class Game implements GameInterface
                         shot = player1.chooseShot();
                     } else {
                         shot = player1.aiShoot();
+                        System.out.println("Computer shot: " + shot);
                     }
                     board2.shoot(shot);
                     player2.opponentShot(shot);
                     status = board2.getStatus(shot);
                     if(status == ShipStatus.NONE){
                         player1.shotResult(shot, ShotStatus.MISS);
+                        System.out.println("miss");
                     } else if (status == ShipStatus.HIT){
                         player1.shotResult(shot, ShotStatus.HIT);
+                        System.out.println("hit");
                     } else if (status == ShipStatus.SUNK){
                         player1.shotResult(shot, ShotStatus.SUNK);
+                        System.out.println("sunk");
                     }
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
                     System.out.println("Player " + player1.toString() + " has forefitted.");
@@ -213,6 +220,7 @@ public class Game implements GameInterface
                 if(board2.allSunk()){
                     return player1;
                 }
+                System.out.println();
                 try{
                     if(humanPlayer2){
                         System.out.println(player2.toString() + "'s board");
@@ -222,16 +230,20 @@ public class Game implements GameInterface
                         shot = player2.chooseShot();
                     } else {
                         shot = player2.aiShoot();
+                        System.out.println("Computer shot: " + shot);
                     }
                     board1.shoot(shot);
                     player1.opponentShot(shot);
                     status = board1.getStatus(shot);
                     if(status == ShipStatus.NONE){
                         player2.shotResult(shot, ShotStatus.MISS);
+                        System.out.println("miss");
                     } else if (status == ShipStatus.HIT){
                         player2.shotResult(shot, ShotStatus.HIT);
+                        System.out.println("hit");
                     } else if (status == ShipStatus.SUNK){
                         player2.shotResult(shot, ShotStatus.SUNK);
+                        System.out.println("sunk");
                     }
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
                     System.out.println("Player " + player2.toString() + " has forefitted.");                    return player1;
@@ -239,6 +251,7 @@ public class Game implements GameInterface
                 if(board1.allSunk()){
                     return player2;
                 }
+                System.out.println();
             }
         } catch (PauseException ex){
             return null;
@@ -257,7 +270,7 @@ public class Game implements GameInterface
         String p2 = player2.saveString();
         String b1 = board1.saveString();
         String b2 = board2.saveString();
-        PrintWriter out = new PrintWriter(new FileWriter(filename, true));
+        PrintWriter out = new PrintWriter(new FileWriter(filename, false));
         out.println(p1);
         out.println(p2);
         out.println(b1);
@@ -296,7 +309,7 @@ public class Game implements GameInterface
             board1 = Board.loadBoard(input.get(2));
             board2 = Board.loadBoard(input.get(3));
             humanPlayer1 = Boolean.parseBoolean(input.get(4));
-            humanPlayer2 = Boolean.parseBoolean(input.get(4));
+            humanPlayer2 = Boolean.parseBoolean(input.get(5));
         } catch (IndexOutOfBoundsException ex){
             //System.out.println("Loading error - incorrect file format");
             throw new IOException("Loading error - incorrect file format");
@@ -308,7 +321,7 @@ public class Game implements GameInterface
         System.out.println(player.toString() + " place your ships");
         System.out.println(board.toString());
         for(int i = board.numShipsPlaced(); i < ships.length; i++){
-            placement = player.choosePlacement(ships[i], board.clone());        	
+            placement = player.choosePlacement(ships[i], board.clone());            
             board.placeShip(ships[i], placement.getPosition(), placement.isVertical());
             System.out.println(board.toString());
             System.out.println();

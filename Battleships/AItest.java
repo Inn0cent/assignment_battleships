@@ -118,6 +118,28 @@ public class AItest
         }
     } 
     
+    @Test
+    public void parrallelTest(){
+        Position pos;
+        Position prevPos = pos23;
+        map.put(prevPos, ShotStatus.HIT);
+        pos = ai.shoot(map, prevPos);
+        prevPos = pos;
+        System.out.println(pos);
+        map.put(prevPos, ShotStatus.HIT);
+        pos = ai.shoot(map, prevPos);
+        prevPos = pos;
+        System.out.println(pos);
+        map.put(prevPos, ShotStatus.MISS);
+        pos = ai.shoot(map, prevPos);
+        prevPos = pos;
+        System.out.println(pos);
+        map.put(prevPos, ShotStatus.MISS);
+        pos = ai.shoot(map, prevPos);
+        prevPos = pos;
+        System.out.println(pos);
+    }
+    
     public boolean mapContainsPos(HashMap<Position, ShotStatus> prevShots, Position pos){ //map.contains() does not work in this situation
         for(Position key : prevShots.keySet()){
             if(key.equals(pos)){

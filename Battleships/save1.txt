@@ -1,0 +1,6 @@
+p1;;
+p2;;
+INTACT,INTACT,INTACT,INTACT,INTACT,:5,1,true;INTACT,INTACT,INTACT,INTACT,:3,6,false;
+
+true
+true

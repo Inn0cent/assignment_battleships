@@ -174,32 +174,36 @@ public class Player implements PlayerInterface
         Player newPlayer = null;
         String[] splitInput = input.split(";");
         try{
-            String[] prevShotsString = splitInput[1].split("/");
-            String[] oppShotsString = splitInput[2].split("/");
             newPlayer = new Player(splitInput[0]);
-            for(String str : prevShotsString){
-                String[] posStatus = str.split(":");
-                String[] pos = posStatus[0].split(",");
-                try{ 
-                    newPlayer.shotResult(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])), ShotStatus.valueOf(posStatus[1]));
-                } catch (InvalidPositionException ex) { 
-                    //System.out.println("Loading error - incorrect file format");
-                    throw new IOException("Loading error - incorrect file format");
-                } catch (ArrayIndexOutOfBoundsException ex){
-                    //System.out.println("Loading error - incorrect file format");
-                    throw new IOException("Loading error - incorrect file format");
+            if(splitInput.length > 1 && !splitInput[1].equals("")){
+                String[] prevShotsString = splitInput[1].split("/");                          
+                for(String str : prevShotsString){
+                    String[] posStatus = str.split(":");
+                    String[] pos = posStatus[0].split(",");
+                    try{ 
+                        newPlayer.shotResult(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])), ShotStatus.valueOf(posStatus[1]));
+                    } catch (InvalidPositionException ex) { 
+                        //System.out.println("Loading error - incorrect file format");
+                        throw new IOException("Loading error - incorrect file format");
+                    } catch (ArrayIndexOutOfBoundsException ex){
+                        //System.out.println("Loading error - incorrect file format");
+                        throw new IOException("Loading error - incorrect file format");
+                    }
                 }
             }
-            for(String str : oppShotsString){
-                String[] pos = str.split(",");
-                try{ 
-                    newPlayer.opponentShot(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])));
-                } catch (InvalidPositionException ex) { 
-                    //System.out.println("Loading error - save corrupted");
-                    throw new IOException("Loading error - incorrect file format");
-                } catch (ArrayIndexOutOfBoundsException ex){
-                    //System.out.println("Loading error - incorrect file format");
-                    throw new IOException("Loading error - incorrect file format");
+            if(splitInput.length > 2){
+                String[] oppShotsString = splitInput[2].split("/"); 
+                for(String str : oppShotsString){
+                    String[] pos = str.split(",");
+                    try{ 
+                        newPlayer.opponentShot(new Position(Integer.parseInt(pos[0]), Integer.parseInt(pos[1])));
+                    } catch (InvalidPositionException ex) { 
+                        //System.out.println("Loading error - save corrupted");
+                        throw new IOException("Loading error - incorrect file format");
+                    } catch (ArrayIndexOutOfBoundsException ex){
+                        //System.out.println("Loading error - incorrect file format");
+                        throw new IOException("Loading error - incorrect file format");
+                    }
                 }
             }
         } catch (ArrayIndexOutOfBoundsException ex) {
