@@ -155,8 +155,6 @@ public class Game implements GameInterface
      **/
     public PlayerInterface play(){
         Placement placement;
-        Position shot = null;
-        ShipStatus status;
         try{
             ShipInterface[] ships1 = {new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)};
             ShipInterface[] ships2 = {new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)};
@@ -190,29 +188,7 @@ public class Game implements GameInterface
 
             while(true){
                 try{
-                    if(humanPlayer1){
-                        System.out.println(player1.toString() + "'s board");
-                        System.out.println(board1.toString());
-                        System.out.println();
-                        System.out.println(player1.toString() + " take a shot");
-                        shot = player1.chooseShot();
-                    } else {
-                        shot = player1.aiShoot();
-                        System.out.println("Computer shot: " + shot);
-                    }
-                    board2.shoot(shot);
-                    player2.opponentShot(shot);
-                    status = board2.getStatus(shot);
-                    if(status == ShipStatus.NONE){
-                        player1.shotResult(shot, ShotStatus.MISS);
-                        System.out.println("miss");
-                    } else if (status == ShipStatus.HIT){
-                        player1.shotResult(shot, ShotStatus.HIT);
-                        System.out.println("hit");
-                    } else if (status == ShipStatus.SUNK){
-                        player1.shotResult(shot, ShotStatus.SUNK);
-                        System.out.println("sunk");
-                    }
+                    shoot(player1, board1, player2, board2, humanPlayer1);
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
                     System.out.println("Player " + player1.toString() + " has forefitted.");
                     return player2;
@@ -222,29 +198,7 @@ public class Game implements GameInterface
                 }
                 System.out.println();
                 try{
-                    if(humanPlayer2){
-                        System.out.println(player2.toString() + "'s board");
-                        System.out.println(board2.toString());
-                        System.out.println();
-                        System.out.println(player2.toString() + " take a shot");
-                        shot = player2.chooseShot();
-                    } else {
-                        shot = player2.aiShoot();
-                        System.out.println("Computer shot: " + shot);
-                    }
-                    board1.shoot(shot);
-                    player1.opponentShot(shot);
-                    status = board1.getStatus(shot);
-                    if(status == ShipStatus.NONE){
-                        player2.shotResult(shot, ShotStatus.MISS);
-                        System.out.println("miss");
-                    } else if (status == ShipStatus.HIT){
-                        player2.shotResult(shot, ShotStatus.HIT);
-                        System.out.println("hit");
-                    } else if (status == ShipStatus.SUNK){
-                        player2.shotResult(shot, ShotStatus.SUNK);
-                        System.out.println("sunk");
-                    }
+                    shoot(player2, board2, player1, board1, humanPlayer2);
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
                     System.out.println("Player " + player2.toString() + " has forefitted.");                    return player1;
                 }
@@ -348,5 +302,33 @@ public class Game implements GameInterface
             }
         }
         return board;
+    }
+    
+    public void shoot(Player player, Board board, Player oppPlayer, Board oppBoard, boolean human) throws InvalidPositionException, PauseException{
+        Position shot = null;
+        ShipStatus status;
+        if(human){
+            System.out.println(player.toString() + "'s board");
+            System.out.println(board.toString());
+            System.out.println();
+            System.out.println(player.toString() + " take a shot");
+            shot = player.chooseShot();
+        } else {
+            shot = player.aiShoot();
+            System.out.println("Computer " + player.toString() + " shot: " + shot);
+        }
+        oppBoard.shoot(shot);
+        oppPlayer.opponentShot(shot);
+        status = oppBoard.getStatus(shot);
+        if(status == ShipStatus.NONE){
+            player.shotResult(shot, ShotStatus.MISS);
+            System.out.println("miss");
+        } else if (status == ShipStatus.HIT){
+            player.shotResult(shot, ShotStatus.HIT);
+            System.out.println("hit");
+        } else if (status == ShipStatus.SUNK){
+            player.shotResult(shot, ShotStatus.SUNK);
+            System.out.println("sunk");
+        }
     }
 }

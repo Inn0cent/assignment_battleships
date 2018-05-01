@@ -27,6 +27,10 @@ public class AI
         searchCount = 0;
     }
 
+    /**
+     * If the previous shot it a hit then it will shoot in all the directions around the previous shot util it hits again
+     * Once the direction is found it will shoot in that direcition until it misses, in which case it shoots in the other direction, or the ship is sunk, where it contiues to shoot randomly.  
+     */ 
     public Position shoot(HashMap<Position, ShotStatus> prevShots, Position prevPos){
         int x;
         int y;
@@ -62,7 +66,9 @@ public class AI
         return null;
     }
 
-
+    /**
+     * Will shoot in the same direction that it is allocated unless it hits a wall in which case it will change direction.
+     */
     public Position shootInDirection(HashMap<Position, ShotStatus> prevShots, Position prevPos) throws InvalidPositionException{
         if(isVertical){
             if(prevPos.getY() + direction <= 10 && prevPos.getY() + direction >= 1){
@@ -78,7 +84,7 @@ public class AI
             }
         }
     }
-
+    
     /**
      * It only shoots at every other position on the board randomly i.e. it only shoots the white squares of a chess board
      * This is because no ship can be 1 square wide so the algorithm only needs to shoot at every other square
@@ -106,7 +112,10 @@ public class AI
         }
         return newPos;
     }
-
+    
+    /**
+     * The method will shoot around the intial hit point until it hits in another position.
+     */
     public Position searchShot(HashMap<Position, ShotStatus> prevShots, Position prevPos) throws InvalidPositionException{       
         if(prevPos.getX() < 10 && searchCount == 0 && !mapContainsPos(prevShots, new Position(prevPos.getX() + 1, prevPos.getY()))){
             isVertical = false;
@@ -151,7 +160,7 @@ public class AI
         }
     }
 
-    public boolean mapContainsPos(HashMap<Position, ShotStatus> prevShots, Position pos){ //map.contains() does not work in this situation
+    public boolean mapContainsPos(HashMap<Position, ShotStatus> prevShots, Position pos){
         for(Position key : prevShots.keySet()){
             if(key.equals(pos)){
                 return true;
