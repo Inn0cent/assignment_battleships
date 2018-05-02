@@ -15,7 +15,9 @@ public class BoardTest
 
     private Board board;
     private Ship ship5;
+    private Ship ship4;
     private Ship ship3;
+    private Ship ship32;
     private Ship ship2;
     private Position pos22;
     private Position pos51;
@@ -45,7 +47,9 @@ public class BoardTest
     {
         board = new Board();
         ship5 = new Ship(5);
+        ship4 = new Ship(4);
         ship3 = new Ship(3);
+        ship32 = new Ship(3);
         ship2 = new Ship(2);
         try{
             pos22 = new Position(2,2);
@@ -122,5 +126,27 @@ public class BoardTest
         board.shoot(new Position(9,7));
         assertEquals(board.allSunk(), true);
         board.toString();
+    }
+    
+    @Test //(expected = ShipOverlapException.class)
+    public void shipOnTop() throws InvalidPositionException, ShipOverlapException{
+        BoardInterface clone;
+        board.clone().placeShip(ship5, new Position(6,8), false);
+        board.placeShip(ship5, new Position(6,8), false);
+        //System.out.print("5");
+        board.clone().placeShip(ship4, new Position(5,1), true);
+        board.placeShip(ship4, new Position(5,1), true);
+        //System.out.print("4");
+        board.clone().placeShip(ship3, new Position(3,6), true);
+        board.placeShip(ship3, new Position(3,6), true);
+        //System.out.print("3");
+        board.clone().placeShip(ship32, new Position(2,5), false);
+        board.placeShip(ship32, new Position(2,5), false);
+        //System.out.print("3!");
+        System.out.print("placed");
+        clone = board.clone();
+        clone.placeShip(ship2, new Position(10,8), true);
+        //board.placeShip(ship3, pos53, false);
+        System.out.println("Fail");
     }
 }

@@ -18,7 +18,6 @@ public class HumanConsolePlayer implements PlayerInterface
     private StringInput input;
     private HashMap<Position, ShotStatus> prevShots;
     private ArrayList<Position> oppShots;
-    private Position prevPos;
     private ComputerPlayer brain;
 
     public HumanConsolePlayer(String name)
@@ -104,8 +103,8 @@ public class HumanConsolePlayer implements PlayerInterface
      * @param status The result of the shot
      */
     public void shotResult(Position position, ShotStatus status){
-        prevPos = position;
         prevShots.put(position, status);
+        brain.shotResult(position, status);
     }
 
     /**
@@ -115,6 +114,7 @@ public class HumanConsolePlayer implements PlayerInterface
      */
     public void opponentShot(Position position){
         oppShots.add(position);
+        brain.opponentShot(position);
     }
 
     /**
@@ -126,7 +126,7 @@ public class HumanConsolePlayer implements PlayerInterface
     }
 
     public Position aiShoot(){
-        return brain.chooseshot(prevShots, prevPos);
+        return brain.chooseShot();
     }
 
     public Position enterCoordinate() throws PauseException{

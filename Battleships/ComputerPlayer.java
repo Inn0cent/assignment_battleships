@@ -49,13 +49,14 @@ public class ComputerPlayer implements PlayerInterface
     public Placement choosePlacement(ShipInterface ship, BoardInterface board) throws PauseException{
         boolean valid = false;
         Placement newPlace = null;
+        Position newPos = null;
         while(!valid){
             valid = true;
             int x = rand.nextInt(10) + 1;
             int y = rand.nextInt(10) + 1;
             boolean isVertical = rand.nextBoolean();
             try{
-                Position newPos = new Position(x,y);
+                newPos = new Position(x,y);
                 board.placeShip(ship, newPos, isVertical);
                 newPlace = new Placement(newPos, isVertical);
             } catch (InvalidPositionException ex) {
@@ -77,26 +78,34 @@ public class ComputerPlayer implements PlayerInterface
         try{
             if(onShip){
                 if (prevShots.get(prevPos) == ShotStatus.HIT && direction != 0){
-                    return shootInDirection(prevShots, prevPos);
+                    prevPos = shootInDirection(prevShots, prevPos);
+                    return prevPos;
                 }else if(prevShots.get(prevPos) == ShotStatus.SUNK){
-                    return randomShot(prevShots);
+                    prevPos = randomShot(prevShots);
+                    return prevPos;
                 } else if (prevShots.get(prevPos) == ShotStatus.HIT && direction == 0){
                     direction = tempDir;                    
-                    return shootInDirection(prevShots, prevPos);
+                    prevPos = shootInDirection(prevShots, prevPos);
+                    return prevPos;
                 } else if (prevShots.get(prevPos) == ShotStatus.MISS && direction != 0){ //if the end of the target ship is reached and it is not sunk yet
-                    return changeDirection(prevShots);
+                    prevPos = changeDirection(prevShots);
+                    return prevPos;
                 }else if (direction == 0){
-                    return searchShot(prevShots, startPos);
+                    prevPos = searchShot(prevShots, startPos);
+                    return prevPos;
                 } else { //Should never be called but if it is then its there
-                    return randomShot(prevShots);
+                    prevPos = randomShot(prevShots);
+                    return prevPos;
                 }
             } else {
                 if(prevShots.get(prevPos) == ShotStatus.HIT){
                     onShip = true;
                     startPos = prevPos;
-                    return searchShot(prevShots, prevPos);
+                    prevPos = searchShot(prevShots, prevPos);
+                    return prevPos;
                 } else {
-                    return randomShot(prevShots);
+                    prevPos = randomShot(prevShots);
+                    return prevPos;
                 }
             }
         } catch (InvalidPositionException ex){
@@ -132,7 +141,7 @@ public class ComputerPlayer implements PlayerInterface
      * a parameter to the constructor.
      */
     public String toString(){
-        return name();
+        return name;
     }
 
     /**

@@ -41,7 +41,7 @@ public class AItest
     public void setUp()
     {
         map = new HashMap();
-        ai = new ComputerPlayer();
+        ai = new ComputerPlayer("");
         try{
             pos22 = new Position(2,2);
             pos23 = new Position(2,3);
@@ -72,7 +72,7 @@ public class AItest
         Position pos;
         Position prevPos = null;
         while(!mapContainsPos(map, pos22) || !mapContainsPos(map, pos23) || !mapContainsPos(map, pos24)){
-            pos = ai.shoot(map, prevPos);
+            pos = ai.chooseShot();
             prevPos = pos;
             System.out.println(pos);
             if(pos.equals(pos22) || pos.equals(pos23) || pos.equals(pos24)){
@@ -89,11 +89,11 @@ public class AItest
         Position pos;
         Position prevPos = pos22;
         map.put(prevPos, ShotStatus.HIT);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
         map.put(prevPos, ShotStatus.MISS);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
     }
@@ -123,21 +123,41 @@ public class AItest
         Position pos;
         Position prevPos = pos23;
         map.put(prevPos, ShotStatus.HIT);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
         map.put(prevPos, ShotStatus.HIT);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
         map.put(prevPos, ShotStatus.MISS);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
         map.put(prevPos, ShotStatus.MISS);
-        pos = ai.shoot(map, prevPos);
+        pos = ai.chooseShot();
         prevPos = pos;
         System.out.println(pos);
+    }
+    
+    @Test
+    public void placeTest() throws InvalidPositionException, ShipOverlapException, PauseException{
+        Placement place;
+        while(true){
+            ShipInterface[] ships = {new Ship(5), new Ship(4), new Ship(3), new Ship(3), new Ship(2)};
+            Board board = new Board();
+            HumanConsolePlayer player = new HumanConsolePlayer("c");
+            for(ShipInterface ship : ships){
+                place = player.aiPlacement(board.clone(), ship);
+                System.out.println(place.getPosition() + " " + place.isVertical() + " " + ship.getSize());
+                System.out.println();
+                board.placeShip(ship, place.getPosition(), place.isVertical());
+                System.out.println(board.toString());
+            }
+            System.out.println();
+            System.out.println("---------------------------------");
+            System.out.println();
+        }
     }
     
     public boolean mapContainsPos(HashMap<Position, ShotStatus> prevShots, Position pos){ //map.contains() does not work in this situation

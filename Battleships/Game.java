@@ -169,7 +169,15 @@ public class Game implements GameInterface
                     return player2;
                 }
             } else {
-                board1 = aiPlaceShips(board1, ships1, player1);
+                try{
+                    board1 = aiPlaceShips(board1, ships1, player1);
+                } catch (InvalidPositionException ex){
+                    System.out.println("Player " + player1.toString() + " has forefitted");
+                    return player2;
+                } catch (ShipOverlapException ex){
+                    System.out.println("Player " + player1.toString() + " has forefitted");
+                    return player2;
+                }
             }
 
             if(humanPlayer2){
@@ -183,7 +191,15 @@ public class Game implements GameInterface
                     return player1;
                 }
             } else {
-                board2 = aiPlaceShips(board2, ships2, player2);
+                try{
+                    board2 = aiPlaceShips(board2, ships2, player2);
+                } catch (InvalidPositionException ex){
+                    System.out.println("Player " + player2.toString() + " has forefitted");
+                    return player1;
+                } catch (ShipOverlapException ex){
+                    System.out.println("Player " + player2.toString() + " has forefitted");
+                    return player1;
+                }
             }         
 
             while(true){
@@ -284,9 +300,11 @@ public class Game implements GameInterface
         return board;
     }
 
-    public Board aiPlaceShips(Board board, ShipInterface[] ships, HumanConsolePlayer player) throws PauseException{
+    public Board aiPlaceShips(Board board, ShipInterface[] ships, HumanConsolePlayer player) throws InvalidPositionException, ShipOverlapException, PauseException{
+        Placement place;
         for(int i = board.numShipsPlaced(); i < ships.length; i++){
-            player.aiPlacement(board.clone(), ships[i]);
+            place = player.aiPlacement(board.clone(), ships[i]);
+            board.placeShip(ships[i], place.getPosition(), place.isVertical());
         }
         return board;
     }
