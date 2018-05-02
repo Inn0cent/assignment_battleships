@@ -23,7 +23,7 @@ public class AItest
     private Position pos23;
     private Position pos24;
     private HashMap<Position, ShotStatus> map;
-    private AI ai;
+    private ComputerPlayer ai;
     
     /**
      * Default constructor for test class AItest
@@ -41,7 +41,7 @@ public class AItest
     public void setUp()
     {
         map = new HashMap();
-        ai = new AI();
+        ai = new ComputerPlayer();
         try{
             pos22 = new Position(2,2);
             pos23 = new Position(2,3);

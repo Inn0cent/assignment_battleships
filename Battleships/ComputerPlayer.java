@@ -1,15 +1,20 @@
 import java.util.Random;
 import java.util.HashMap;
+import java.util.ArrayList;
 /**
  * Write a description of class AI here.
  *
  * @author (your name)
  * @version (a version number or a date)
  */
-public class AI
+public class ComputerPlayer implements PlayerInterface
 {
 
+    private HashMap<Position, ShotStatus> prevShots;
+    private Position prevPos;
+    private ArrayList<Position> oppShots;
     private Random rand;
+    private String name;
     private boolean onShip;
     private boolean isVertical;
     private int direction;
@@ -18,20 +23,55 @@ public class AI
     private int searchCount;
     private boolean changed; //When this is true the shooting direction has changed so there are two ships next to each other
 
-    public AI()
+    public ComputerPlayer(String name)
     {
+        prevShots = new HashMap<Position, ShotStatus>();
+        oppShots = new ArrayList<Position>();
         rand = new Random();
         onShip = false;
         direction = 0;
         tempDir = 0;
         searchCount = 0;
+        this.name = name;
+    }
+
+    /**
+     * @param ship The ship to be placed
+     * 
+     * @param board (A clone of) the current board state to which the ship will be added
+     * 
+     * @return The placement (position and orientation) of the ship specified by the player
+     * 
+     * @throws PauseException At any stage the user can choose to enter "pause" (case insensitive) to make the game return to 
+     * the main menu
+     * 
+     */
+    public Placement choosePlacement(ShipInterface ship, BoardInterface board) throws PauseException{
+        boolean valid = false;
+        Placement newPlace = null;
+        while(!valid){
+            valid = true;
+            int x = rand.nextInt(10) + 1;
+            int y = rand.nextInt(10) + 1;
+            boolean isVertical = rand.nextBoolean();
+            try{
+                Position newPos = new Position(x,y);
+                board.placeShip(ship, newPos, isVertical);
+                newPlace = new Placement(newPos, isVertical);
+            } catch (InvalidPositionException ex) {
+                valid = false;
+            } catch (ShipOverlapException ex){
+                valid = false;
+            }   
+        }
+        return newPlace;
     }
 
     /**
      * If the previous shot it a hit then it will shoot in all the directions around the previous shot util it hits again
      * Once the direction is found it will shoot in that direcition until it misses, in which case it shoots in the other direction, or the ship is sunk, where it contiues to shoot randomly.  
      */ 
-    public Position shoot(HashMap<Position, ShotStatus> prevShots, Position prevPos){
+    public Position chooseShot(){
         int x;
         int y;
         try{
@@ -65,6 +105,35 @@ public class AI
         System.out.println("Error in ai");
         return null;
     }
+    
+    /**
+     * After the game calls the chooseShot method, it then calls this method with the result of the shot.
+     * The player may choose to keep track of the results of previous shots in its state
+     * 
+     * @param position The position of the shot
+     * 
+     * @param status The result of the shot
+     */
+    public void shotResult(Position position, ShotStatus status){
+        prevShots.put(position, status);
+    }
+    
+    /**
+     * After the game has received the opponent's shot this method is called. It does not 
+     * affect the progress of the game, but may be of interest to the player (particularly a human player).
+     * @param position The position that the opponent chose for their shot.
+     */
+    public void opponentShot(Position position){
+        oppShots.add(position);
+    }
+    
+    /**
+     * @return A string representation of the player i.e. the display name provided as 
+     * a parameter to the constructor.
+     */
+    public String toString(){
+        return name();
+    }
 
     /**
      * Will shoot in the same direction that it is allocated unless it hits a wall in which case it will change direction.
@@ -84,7 +153,7 @@ public class AI
             }
         }
     }
-    
+
     /**
      * It only shoots at every other position on the board randomly i.e. it only shoots the white squares of a chess board
      * This is because no ship can be 1 square wide so the algorithm only needs to shoot at every other square
@@ -112,7 +181,7 @@ public class AI
         }
         return newPos;
     }
-    
+
     /**
      * The method will shoot around the intial hit point until it hits in another position.
      */

@@ -11,23 +11,23 @@ import java.io.IOException;
  * The player will also be informed of opponent's shots with the opponentShot method. This could be used to update a local copy of the game board for display to the user.
  * 
  */
-public class Player implements PlayerInterface
+public class HumanConsolePlayer implements PlayerInterface
 {
-    
+
     private String name;
     private StringInput input;
     private HashMap<Position, ShotStatus> prevShots;
     private ArrayList<Position> oppShots;
     private Position prevPos;
-    private AI brain;
-    
-    public Player(String name)
+    private ComputerPlayer brain;
+
+    public HumanConsolePlayer(String name)
     {
         this.name = name;
         input = new StringInput();
         prevShots = new HashMap<Position, ShotStatus>();
         oppShots = new ArrayList<Position>();
-        brain = new AI();
+        brain = new ComputerPlayer(name);
     }
 
     /**
@@ -124,11 +124,11 @@ public class Player implements PlayerInterface
     public String toString(){
         return name;
     }
-    
+
     public Position aiShoot(){
-        return brain.shoot(prevShots, prevPos);
+        return brain.chooseshot(prevShots, prevPos);
     }
-    
+
     public Position enterCoordinate() throws PauseException{
         int x;
         int y;
@@ -157,7 +157,11 @@ public class Player implements PlayerInterface
         }
         return null;
     }
-    
+
+    public Placement aiPlacement(BoardInterface board, ShipInterface ship) throws PauseException{
+        return brain.choosePlacement(ship, board);
+    }
+
     public String saveString(){
         String save = name + ";";
         for(Position pos : prevShots.keySet()){
@@ -169,12 +173,12 @@ public class Player implements PlayerInterface
         }
         return save;
     }
-    
-    public static Player loadPlayer(String input) throws IOException{
-        Player newPlayer = null;
+
+    public static HumanConsolePlayer loadPlayer(String input) throws IOException{
+        HumanConsolePlayer newPlayer = null;
         String[] splitInput = input.split(";");
         try{
-            newPlayer = new Player(splitInput[0]);
+            newPlayer = new HumanConsolePlayer(splitInput[0]);
             if(splitInput.length > 1 && !splitInput[1].equals("")){
                 String[] prevShotsString = splitInput[1].split("/");                          
                 for(String str : prevShotsString){

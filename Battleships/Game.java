@@ -19,8 +19,8 @@ import java.util.Random;
 public class Game implements GameInterface
 {
 
-    private Player player1;
-    private Player player2;
+    private HumanConsolePlayer player1;
+    private HumanConsolePlayer player2;
     private static PlayerInterface winner;
     private Board board1;
     private Board board2;
@@ -30,7 +30,7 @@ public class Game implements GameInterface
     private static boolean humanPlayer2;
     private Random rand = new Random();
 
-    public Game(Player player1, Player player2)
+    public Game(HumanConsolePlayer player1, HumanConsolePlayer player2)
     {
         this.player1 = player1;
         this.player2 = player2;
@@ -108,11 +108,11 @@ public class Game implements GameInterface
 
     public static void newGame(){
         String input;
-        Player player1;
-        Player player2;
+        HumanConsolePlayer player1;
+        HumanConsolePlayer player2;
         System.out.println("Enter player1's name");
         input = stringInput.enterData();
-        player1 = new Player(input);
+        player1 = new HumanConsolePlayer(input);
         System.out.println("Is " + input + " human? (y/n)");
         input = stringInput.enterData();
         while(!input.equals("y") && !input.equals("n")){
@@ -126,7 +126,7 @@ public class Game implements GameInterface
         }
         System.out.println("Enter player2's name");
         input = stringInput.enterData();
-        player2 = new Player(input);
+        player2 = new HumanConsolePlayer(input);
         System.out.println("Is " + input + " human? (y/n)");
         input = stringInput.enterData();
         while(!input.equals("y") && !input.equals("n")){
@@ -169,7 +169,7 @@ public class Game implements GameInterface
                     return player2;
                 }
             } else {
-                board1 = aiPlaceShips(board1, ships1);
+                board1 = aiPlaceShips(board1, ships1, player1);
             }
 
             if(humanPlayer2){
@@ -183,7 +183,7 @@ public class Game implements GameInterface
                     return player1;
                 }
             } else {
-                board2 = aiPlaceShips(board2, ships2);
+                board2 = aiPlaceShips(board2, ships2, player2);
             }         
 
             while(true){
@@ -200,7 +200,8 @@ public class Game implements GameInterface
                 try{
                     shoot(player2, board2, player1, board1, humanPlayer2);
                 } catch (InvalidPositionException ex){ //This should never get called as all the potential errors are caught before
-                    System.out.println("Player " + player2.toString() + " has forefitted.");                    return player1;
+                    System.out.println("Player " + player2.toString() + " has forefitted.");  
+                    return player1;
                 }
                 if(board1.allSunk()){
                     return player2;
@@ -258,8 +259,8 @@ public class Game implements GameInterface
             }
         }
         try{
-            player1 = Player.loadPlayer(input.get(0));
-            player2 = Player.loadPlayer(input.get(1));
+            player1 = HumanConsolePlayer.loadPlayer(input.get(0));
+            player2 = HumanConsolePlayer.loadPlayer(input.get(1));
             board1 = Board.loadBoard(input.get(2));
             board2 = Board.loadBoard(input.get(3));
             humanPlayer1 = Boolean.parseBoolean(input.get(4));
@@ -270,7 +271,7 @@ public class Game implements GameInterface
         }
     }
 
-    public Board playerPlaceShips(Player player, Board board, ShipInterface[] ships) throws InvalidPositionException, ShipOverlapException, PauseException {
+    public Board playerPlaceShips(HumanConsolePlayer player, Board board, ShipInterface[] ships) throws InvalidPositionException, ShipOverlapException, PauseException {
         Placement placement;
         System.out.println(player.toString() + " place your ships");
         System.out.println(board.toString());
@@ -283,28 +284,14 @@ public class Game implements GameInterface
         return board;
     }
 
-    public Board aiPlaceShips(Board board, ShipInterface[] ships){
+    public Board aiPlaceShips(Board board, ShipInterface[] ships, HumanConsolePlayer player) throws PauseException{
         for(int i = board.numShipsPlaced(); i < ships.length; i++){
-            boolean valid = false;
-            while(!valid){
-                valid = true;
-                int x = rand.nextInt(10) + 1;
-                int y = rand.nextInt(10) + 1;
-                boolean isVertical = rand.nextBoolean();
-                try{
-                    Position newPos = new Position(x,y);
-                    board.placeShip(ships[i], newPos, isVertical);
-                } catch (InvalidPositionException ex) {
-                    valid = false;
-                } catch (ShipOverlapException ex){
-                    valid = false;
-                }   
-            }
+            player.aiPlacement(board.clone(), ships[i]);
         }
         return board;
     }
-    
-    public void shoot(Player player, Board board, Player oppPlayer, Board oppBoard, boolean human) throws InvalidPositionException, PauseException{
+
+    public void shoot(HumanConsolePlayer player, Board board, HumanConsolePlayer oppPlayer, Board oppBoard, boolean human) throws InvalidPositionException, PauseException{
         Position shot = null;
         ShipStatus status;
         if(human){
