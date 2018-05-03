@@ -231,7 +231,6 @@ public class Board implements BoardInterface
         for(Ship ship : ships.keySet()){
             try{
                 newShip = copyShip(ship);
-                System.out.println("Ship " + newShip.getSize() + " copied");
                 boardClone.placeShip(newShip, ships.get(ship).getPosition(), ships.get(ship).isVertical());
             } catch (InvalidPositionException ex){
                 System.out.println("Invalid pos in clone");

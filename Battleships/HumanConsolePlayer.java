@@ -161,7 +161,11 @@ public class HumanConsolePlayer implements PlayerInterface
     public Placement aiPlacement(BoardInterface board, ShipInterface ship) throws PauseException{
         return brain.choosePlacement(ship, board);
     }
-
+    
+    /**
+     * Converts everything in the player to a string that can be then saved in a file.
+     * @return A string in the form: name;pos1:shot status1/pos2:shot status2/...;pos1/pos2/...
+     */
     public String saveString(){
         String save = name + ";";
         for(Position pos : prevShots.keySet()){
@@ -174,6 +178,11 @@ public class HumanConsolePlayer implements PlayerInterface
         return save;
     }
 
+    /**
+     * Converts the input to a player and returns a player
+     * @param a string in the form: name;pos1:shot status1/pos2:shot status2/...;pos1/pos2/...
+     * @return A HumanConsolePlayer
+     */
     public static HumanConsolePlayer loadPlayer(String input) throws IOException{
         HumanConsolePlayer newPlayer = null;
         String[] splitInput = input.split(";");

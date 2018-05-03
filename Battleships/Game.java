@@ -69,10 +69,10 @@ public class Game implements GameInterface
                 try{
                     game = new Game(null, null);
                     game.loadGame(filename);
-                    winner = game.play();
+                    System.out.println("File loaded");
                 } catch (IOException ex) {
-                    ex.getMessage();
                     System.out.println("File failed to load");
+                    game = null;
                 } catch (NullPointerException ex){
                     System.out.println(ex.getMessage());
                 }
