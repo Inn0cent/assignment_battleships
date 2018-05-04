@@ -1,14 +1,12 @@
 #BlueJ class context
-comment0.target=ShipInterface
-comment0.text=\r\n\ The\ Ship\ class\ represents\ individual\ ships\ in\ the\ game\ of\ battleships.\r\n\ \r\n\ Write\ a\ constructor\ that\ takes\ an\ integer\ (the\ size\ of\ the\ ship)\ as\ a\ parameter\r\n
+comment0.params=
+comment0.target=int\ getSize()
 comment1.params=
-comment1.target=int\ getSize()
-comment2.params=
-comment2.target=boolean\ isSunk()
+comment1.target=boolean\ isSunk()
+comment2.params=offset
+comment2.target=void\ shoot(int)
+comment2.text=\r\n\ Update\ the\ status\ of\ the\ ship\ by\ firing\ at\ the\ offset\ specified.\ \r\n\ After\ the\ method\ is\ called\ then\ the\ status\ at\ the\ offset\ will\ either\ be\ HIT\ (if\ at\ least\ one\ square\ remains\ INTACT)\ \r\n\ or\ SUNK\ (if\ all\ the\ other\ squares\ were\ also\ HIT\ before\ the\ method\ was\ called).\ If\ a\ square\ was\ already\ HIT\ before\r\n\ this\ method\ was\ called,\ it\ remains\ HIT\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\ \r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
 comment3.params=offset
-comment3.target=void\ shoot(int)
-comment3.text=\r\n\ Update\ the\ status\ of\ the\ ship\ by\ firing\ at\ the\ offset\ specified.\ \r\n\ After\ the\ method\ is\ called\ then\ the\ status\ at\ the\ offset\ will\ either\ be\ HIT\ (if\ at\ least\ one\ square\ remains\ INTACT)\ \r\n\ or\ SUNK\ (if\ all\ the\ other\ squares\ were\ also\ HIT\ before\ the\ method\ was\ called).\ If\ a\ square\ was\ already\ HIT\ before\r\n\ this\ method\ was\ called,\ it\ remains\ HIT\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\ \r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
-comment4.params=offset
-comment4.target=ShipStatus\ getStatus(int)
-comment4.text=\r\n\ Find\ the\ status\ of\ a\ square\ of\ the\ ship\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\r\n\ \r\n\ @return\ the\ status\ of\ that\ square\:\ INTACT,\ HIT\ or\ SUNK\r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
-numComments=5
+comment3.target=ShipStatus\ getStatus(int)
+comment3.text=\r\n\ Find\ the\ status\ of\ a\ square\ of\ the\ ship\r\n\ \r\n\ @param\ offset\ The\ offset\ from\ the\ top/left\ of\ the\ ship.\r\n\ \r\n\ @return\ the\ status\ of\ that\ square\:\ INTACT,\ HIT\ or\ SUNK\r\n\ \r\n\ @throws\ InvalidPositionException\ When\ the\ parameter\ is\ less\ than\ zero\ or\ \r\n\ greater\ than/equal\ to\ the\ size\ of\ the\ ship\ \r\n
+numComments=4

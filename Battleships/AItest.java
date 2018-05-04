@@ -140,7 +140,7 @@ public class AItest
         System.out.println(pos);
     }
     
-    @Test
+    //@Test
     public void placeTest() throws InvalidPositionException, ShipOverlapException, PauseException{
         Placement place;
         while(true){
